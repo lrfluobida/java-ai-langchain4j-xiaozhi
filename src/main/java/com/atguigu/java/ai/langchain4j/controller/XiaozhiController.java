@@ -1,9 +1,11 @@
 package com.atguigu.java.ai.langchain4j.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import com.atguigu.java.ai.langchain4j.assistant.XiaozhiAgent;
 import com.atguigu.java.ai.langchain4j.bean.ChatForm;
+import com.atguigu.java.ai.langchain4j.service.AppointmentSkillService;
+import com.atguigu.java.ai.langchain4j.service.ConversationSummaryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +20,28 @@ public class XiaozhiController {
 
     @Autowired
     private XiaozhiAgent xiaozhiAgent;
+
+    @Autowired
+    private AppointmentSkillService appointmentSkillService;
+
+    @Autowired
+    private ConversationSummaryService conversationSummaryService;
+
     @Operation(summary = "对话")
     @PostMapping(value = "/chat", produces = "text/stream;charset=utf-8")
-    public Flux<String> chat(@RequestBody ChatForm chatForm)  {
-        return xiaozhiAgent.chat(chatForm.getMemoryId(), chatForm.getMessage());
+    public Flux<String> chat(@RequestBody ChatForm chatForm) {
+        // 读取当前会话摘要，提升长对话场景下的上下文能力
+        String conversationSummary = conversationSummaryService.getSummary(chatForm.getMemoryId());
+        // 根据当前会话决定是否注入预约技能规则
+        String appointmentSkillRules = appointmentSkillService.resolveAppointmentSkill(
+                chatForm.getMemoryId(),
+                chatForm.getMessage()
+        );
+        return xiaozhiAgent.chat(
+                chatForm.getMemoryId(),
+                chatForm.getMessage(),
+                conversationSummary,
+                appointmentSkillRules
+        );
     }
 }

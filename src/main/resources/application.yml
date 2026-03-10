@@ -39,3 +39,13 @@ mybatis-plus:
 logging:
   level:
     root: info #debug
+
+xiaozhi:
+  rag:
+    knowledge-dir: "E:/develop/JAVA/knowledge"
+    allowed-extensions:
+      - md
+      - txt
+      - pdf
+    max-segment-size: 300
+    max-overlap-size: 30
