@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+langchain4j:
+  open-ai:
+    chat-model:
+      base-url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api-key: ${QWEN_API_KEY}
+      model-name: "deepseek-v3.2"
+      log-requests: true
+      log-responses: true
+
+  community:
+    dashscope:
+      chat-model:
+        api-key: ${QWEN_API_KEY}
+        model-name: "qwen3-max"
+      streaming-chat-model:
+        api-key: ${QWEN_API_KEY}
+        model-name: "qwen3-max"
+      embedding-model:
+        api-key: ${QWEN_API_KEY}
+        model-name: "text-embedding-v4"
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/chat_memory_db
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/guiguxiaozhi?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 123456
+# 开启 SQL 日志打印
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# 启用日志 debug 级别
+logging:
+  level:
+    root: info #debug
