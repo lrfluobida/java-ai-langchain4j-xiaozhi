@@ -30,9 +30,7 @@ public class XiaozhiController {
     @Operation(summary = "对话")
     @PostMapping(value = "/chat", produces = "text/stream;charset=utf-8")
     public Flux<String> chat(@RequestBody ChatForm chatForm) {
-        // 读取当前会话摘要，提升长对话场景下的上下文能力
         String conversationSummary = conversationSummaryService.getSummary(chatForm.getMemoryId());
-        // 根据当前会话决定是否注入预约技能规则
         String appointmentSkillRules = appointmentSkillService.resolveAppointmentSkill(
                 chatForm.getMemoryId(),
                 chatForm.getMessage()

@@ -41,6 +41,8 @@ logging:
     root: info #debug
 
 xiaozhi:
+  debug:
+    chat-request: false
   rag:
     knowledge-dir: "E:/develop/JAVA/knowledge"
     allowed-extensions:

@@ -1,0 +1,136 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< org.atguigu:java-ai-langchain4j >-------------------
+[INFO] Building java-ai-langchain4j 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.5.0:run (default-cli) > test-compile @ java-ai-langchain4j >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ java-ai-langchain4j ---
+[INFO] Copying 6 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ java-ai-langchain4j ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ java-ai-langchain4j ---
+[INFO] skip non existing resourceDirectory E:\develop\JAVA\java-ai-langchain4j\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ java-ai-langchain4j ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 9 source files with javac [debug release 17] to target\test-classes
+[INFO] /E:/develop/JAVA/java-ai-langchain4j/src/test/java/com/atguigu/java/ai/langchain4j/EmbeddingTest.java: E:\develop\JAVA\java-ai-langchain4j\src\test\java\com\atguigu\java\ai\langchain4j\EmbeddingTest.java使用了未经检查或不安全的操作。
+[INFO] /E:/develop/JAVA/java-ai-langchain4j/src/test/java/com/atguigu/java/ai/langchain4j/EmbeddingTest.java: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[INFO] 
+[INFO] <<< spring-boot:3.5.0:run (default-cli) < test-compile @ java-ai-langchain4j <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.5.0:run (default-cli) @ java-ai-langchain4j ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.0)
+
+2026-03-11T18:27:46.186+08:00  INFO 24592 --- [           main] c.atguigu.java.ai.langchain4j.appMain    : Starting appMain using Java 17.0.17 with PID 24592 (E:\develop\JAVA\java-ai-langchain4j\target\classes started by ???? in E:\develop\JAVA\java-ai-langchain4j)
+2026-03-11T18:27:46.189+08:00  INFO 24592 --- [           main] c.atguigu.java.ai.langchain4j.appMain    : No active profile set, falling back to 1 default profile: "default"
+2026-03-11T18:27:46.999+08:00  INFO 24592 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2026-03-11T18:27:47.028+08:00  INFO 24592 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 10 ms. Found 0 MongoDB repository interfaces.
+2026-03-11T18:27:47.760+08:00  INFO 24592 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 18080 (http)
+2026-03-11T18:27:47.789+08:00  INFO 24592 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-11T18:27:47.789+08:00  INFO 24592 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2026-03-11T18:27:47.887+08:00  INFO 24592 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-11T18:27:47.889+08:00  INFO 24592 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1658 ms
+2026-03-11T18:27:48.299+08:00  INFO 24592 --- [           main] org.mongodb.driver.client                : MongoClient with metadata {"driver": {"name": "mongo-java-driver|sync|spring-boot", "version": "5.4.0"}, "os": {"type": "Windows", "name": "Windows 10", "architecture": "amd64", "version": "10.0"}, "platform": "Java/Microsoft/17.0.17+10-LTS"} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, transportSettings=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@443af394, com.mongodb.Jep395RecordCodecProvider@734f8317, com.mongodb.KotlinCodecProvider@7dd3981e]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[localhost:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='15 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, proxySettings=ProxySettings{host=null, port=null, username=null, password=null}}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverMonitoringMode=AUTO, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=JAVA_LEGACY, serverApi=null, autoEncryptionSettings=null, dnsClient=null, inetAddressResolver=null, contextProvider=null, timeoutMS=null}
+2026-03-11T18:27:48.318+08:00  INFO 24592 --- [localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, cryptd=false, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=25, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=18061400, minRoundTripTimeNanos=0}
+2026-03-11T18:27:48.380+08:00  WARN 24592 --- [           main] o.s.data.convert.CustomConversions       : Registering converter from interface java.util.List to interface org.springframework.data.domain.Vector as reading converter although it doesn't convert from a store-supported type; You might want to check your annotation setup at the converter implementation
+2026-03-11T18:27:48.462+08:00  WARN 24592 --- [           main] o.s.data.convert.CustomConversions       : Registering converter from interface java.util.List to interface org.springframework.data.domain.Vector as reading converter although it doesn't convert from a store-supported type; You might want to check your annotation setup at the converter implementation
+Logging initialized using 'class org.apache.ibatis.logging.stdout.StdOutImpl' adapter.
+Get /172.20.28.219 network interface 
+Get network interface info: name:wlan1 (Intel(R) Wi-Fi 6 AX201 160MHz)
+Initialization Sequence datacenterId:7 workerId:21
+ _ _   |_  _ _|_. ___ _ |    _ 
+| | |\/|_)(_| | |_\  |_)||_|_\ 
+     /               |         
+                        3.5.16 
+2026-03-11T18:27:51.978+08:00  INFO 24592 --- [           main] o.s.v.b.OptionalValidatorFactoryBean     : Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
+2026-03-11T18:27:53.065+08:00  INFO 24592 --- [           main] m.e.s.MybatisPlusApplicationContextAware : Register ApplicationContext instances org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@51972dc7
+2026-03-11T18:27:53.401+08:00  INFO 24592 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 18080 (http) with context path '/'
+2026-03-11T18:27:53.425+08:00  INFO 24592 --- [           main] c.atguigu.java.ai.langchain4j.appMain    : Started appMain in 7.705 seconds (process running for 8.112)
+2026-03-11T18:27:53.919+08:00  INFO 24592 --- [io-18080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-11T18:27:53.930+08:00  INFO 24592 --- [io-18080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-03-11T18:27:53.932+08:00  INFO 24592 --- [io-18080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+查询是否有号源
+科室名称：神经内科
+日期：2026-03-12
+时间：下午
+医生名称：
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6cc4b3c3] was not registered for synchronization because synchronization is not active
+2026-03-11T18:28:36.876+08:00  INFO 24592 --- [liyuncs.com/...] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-11T18:28:37.088+08:00  INFO 24592 --- [liyuncs.com/...] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7be2fa01
+2026-03-11T18:28:37.090+08:00  INFO 24592 --- [liyuncs.com/...] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+JDBC Connection [HikariProxyConnection@1463059014 wrapping com.mysql.cj.jdbc.ConnectionImpl@7be2fa01] will not be managed by Spring
+==>  Preparing: SELECT id,username,id_card,department,date,time,doctor_name FROM appointment WHERE (username = ? AND id_card = ? AND department = ? AND date = ? AND time = ?)
+==> Parameters: 李四(String), 410101199001011234(String), 神经内科(String), 2026-03-12(String), 下午(String)
+<==      Total: 0
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6cc4b3c3]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3408131f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@834121877 wrapping com.mysql.cj.jdbc.ConnectionImpl@7be2fa01] will not be managed by Spring
+==>  Preparing: INSERT INTO appointment ( username, id_card, department, date, time, doctor_name ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 李四(String), 410101199001011234(String), 神经内科(String), 2026-03-12(String), 下午(String), (String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3408131f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4b4a7a43] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@816642575 wrapping com.mysql.cj.jdbc.ConnectionImpl@7be2fa01] will not be managed by Spring
+==>  Preparing: SELECT id,username,id_card,department,date,time,doctor_name FROM appointment WHERE (username = ? AND id_card = ? AND department = ? AND date = ? AND time = ?)
+==> Parameters: 李四(String), 410101199001011234(String), 神经内科(String), 2026-03-12(String), 下午(String)
+<==    Columns: id, username, id_card, department, date, time, doctor_name
+<==        Row: 5, 李四, 410101199001011234, 神经内科, 2026-03-12, 下午, 
+<==      Total: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4b4a7a43]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5f996374] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1399928045 wrapping com.mysql.cj.jdbc.ConnectionImpl@7be2fa01] will not be managed by Spring
+==>  Preparing: DELETE FROM appointment WHERE id=?
+==> Parameters: 5(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5f996374]
+2026-03-11T18:30:22.681+08:00  WARN 24592 --- [liyuncs.com/...] d.l.c.model.dashscope.QwenHelper         : The first message should be a system message or a user message, but found: AiMessage { text = "我需要先查询一下神经内科在2026年3月12日下午是否有号源。让我为您检查一下。
+
+", thinking = null, toolExecutionRequests = [ToolExecutionRequest { id = "call_fea4afd6849e4a1086f6831f", name = "查询是否有号源", arguments = "{"arg0": "神经内科", "arg1": "2026-03-12", "arg2": "下午", "arg3": ""}" }], attributes = {} }
+2026-03-11T18:30:22.681+08:00  WARN 24592 --- [liyuncs.com/...] d.l.c.model.dashscope.QwenHelper         : The first message should be a system message or a user message, but found: ToolExecutionResultMessage{id='call_fea4afd6849e4a1086f6831f', toolName='查询是否有号源', text='true', isError=false, attributes={}}
+2026-03-11T18:30:22.682+08:00  WARN 24592 --- [liyuncs.com/...] d.l.c.model.dashscope.QwenHelper         : The first message should be a system message or a user message, but found: AiMessage { text = "好的，神经内科在2026年3月12日下午有号源。由于您没有指定具体的医生，我需要为您分配一位神经内科的医生。
+
+", thinking = null, toolExecutionRequests = [ToolExecutionRequest { id = "call_ac9ad827797b483bbc9036b1", name = "预约挂号", arguments = "{"arg0": {"id": 0, "username": "李四", "idCard": "410101199001011234", "department": "神经内科", "date": "2026-03-12", "time": "下午", "doctorName": ""}}" }], attributes = {} }
+2026-03-11T18:30:22.682+08:00  WARN 24592 --- [liyuncs.com/...] d.l.c.model.dashscope.QwenHelper         : The first message should be a system message or a user message, but found: ToolExecutionResultMessage{id='call_ac9ad827797b483bbc9036b1', toolName='预约挂号', text='预约成功，并返回预约详情', isError=false, attributes={}}
+2026-03-11T18:30:22.682+08:00  WARN 24592 --- [liyuncs.com/...] d.l.c.model.dashscope.QwenHelper         : The first message should be a system message or a user message, but found: AiMessage { text = "您的预约已成功！以下是您的预约详情：
+
+- 姓名：李四
+- 身份证号：410101199001011234
+- 科室：神经内科
+- 日期：2026年3月12日
+- 时间：下午
+- 医生：系统已为您自动分配一位神经内科医生
+
+请您按时就诊，如有变动请提前取消预约。祝您健康！", thinking = null, toolExecutionRequests = [], attributes = {} }
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  04:11 min
+[INFO] Finished at: 2026-03-11T18:31:48+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.5.0:run (default-cli) on project java-ai-langchain4j: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

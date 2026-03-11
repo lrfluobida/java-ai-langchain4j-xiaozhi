@@ -1,5 +1,6 @@
 package com.atguigu.java.ai.langchain4j.service.impl;
 
+import com.atguigu.java.ai.langchain4j.bean.ConversationProgress;
 import com.atguigu.java.ai.langchain4j.bean.ConversationSummary;
 import com.atguigu.java.ai.langchain4j.service.ConversationSummaryService;
 import dev.langchain4j.community.model.dashscope.QwenChatModel;
@@ -18,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,9 +30,7 @@ public class ConversationSummaryServiceImpl implements ConversationSummaryServic
 
     private static final Logger log = LoggerFactory.getLogger(ConversationSummaryServiceImpl.class);
 
-    // 至少累计到一定用户轮次后再开始生成摘要，避免前几轮对话就频繁压缩
     private static final int MIN_SUMMARY_USER_MESSAGES = 3;
-    // 与上次摘要相比，新增这么多条用户消息后再刷新一次摘要
     private static final int SUMMARY_REFRESH_USER_MESSAGES = 2;
 
     @Autowired
@@ -43,7 +45,7 @@ public class ConversationSummaryServiceImpl implements ConversationSummaryServic
             return "";
         }
 
-        ConversationSummary conversationSummary = findByMemoryId(memoryId);
+        ConversationSummary conversationSummary = findSummaryByMemoryId(memoryId);
         if (conversationSummary == null || !StringUtils.hasText(conversationSummary.getSummary())) {
             return "";
         }
@@ -56,38 +58,41 @@ public class ConversationSummaryServiceImpl implements ConversationSummaryServic
             return;
         }
 
-        // 摘要时忽略 SystemMessage，只保留真正参与对话的用户消息和 AI 回复
-        List<ChatMessage> summaryMessages = filterSummaryMessages(messages);
-        if (CollectionUtils.isEmpty(summaryMessages)) {
-            return;
-        }
-        // 只在一轮结束后刷新摘要，也就是最后一条有效消息必须是 AI 回复
-        if (!(summaryMessages.get(summaryMessages.size() - 1) instanceof AiMessage)) {
+        List<ChatMessage> conversationMessages = filterConversationMessages(messages);
+        if (CollectionUtils.isEmpty(conversationMessages)) {
             return;
         }
 
-        int userMessageCount = countUserMessages(summaryMessages);
-        if (userMessageCount < MIN_SUMMARY_USER_MESSAGES) {
+        ConversationProgress progress = updateProgress(memoryId, conversationMessages);
+        ChatMessage latestMessage = conversationMessages.get(conversationMessages.size() - 1);
+        if (!(latestMessage instanceof AiMessage)) {
             return;
         }
 
-        ConversationSummary existingSummary = findByMemoryId(memoryId);
-        if (existingSummary != null
-                && existingSummary.getMessageCount() != null
-                && userMessageCount - existingSummary.getMessageCount() < SUMMARY_REFRESH_USER_MESSAGES) {
+        int totalUserMessages = defaultValue(progress.getTotalUserMessages());
+        int summarizedUserMessages = defaultValue(progress.getSummarizedUserMessages());
+        if (totalUserMessages < MIN_SUMMARY_USER_MESSAGES) {
+            return;
+        }
+        if (totalUserMessages - summarizedUserMessages < SUMMARY_REFRESH_USER_MESSAGES) {
             return;
         }
 
+        ConversationSummary existingSummary = findSummaryByMemoryId(memoryId);
         try {
-            String summaryPrompt = buildSummaryPrompt(existingSummary, summaryMessages);
+            String summaryPrompt = buildSummaryPrompt(existingSummary, conversationMessages);
             String summary = qwenChatModel.chat(summaryPrompt);
             if (!StringUtils.hasText(summary)) {
                 return;
             }
-            saveSummary(memoryId, summary, userMessageCount);
+
+            saveSummary(memoryId, summary, totalUserMessages);
+            progress.setSummarizedUserMessages(totalUserMessages);
+            progress.setSummaryVersion(defaultValue(progress.getSummaryVersion()) + 1);
+            progress.setUpdatedAt(System.currentTimeMillis());
+            saveProgress(progress);
         } catch (Exception e) {
-            // 摘要生成失败时不影响主聊天流程，只记录日志方便排查
-            log.warn("刷新会话摘要失败，memoryId={}", memoryId, e);
+            log.warn("Failed to refresh conversation summary, memoryId={}", normalizeMemoryId(memoryId), e);
         }
     }
 
@@ -96,49 +101,102 @@ public class ConversationSummaryServiceImpl implements ConversationSummaryServic
         if (memoryId == null) {
             return;
         }
-        Criteria criteria = Criteria.where("memoryId").is(String.valueOf(memoryId));
-        Query query = new Query(criteria);
+        Query query = queryByMemoryId(memoryId);
         mongoTemplate.remove(query, ConversationSummary.class);
+        mongoTemplate.remove(query, ConversationProgress.class);
     }
 
-    private ConversationSummary findByMemoryId(Object memoryId) {
-        Criteria criteria = Criteria.where("memoryId").is(String.valueOf(memoryId));
-        Query query = new Query(criteria);
-        return mongoTemplate.findOne(query, ConversationSummary.class);
+    private ConversationProgress updateProgress(Object memoryId, List<ChatMessage> messages) {
+        ConversationProgress progress = findProgressByMemoryId(memoryId);
+        if (progress == null) {
+            progress = bootstrapProgress(memoryId, messages);
+            saveProgress(progress);
+            return progress;
+        }
+
+        progress.setMemoryId(normalizeMemoryId(memoryId));
+        progress.setUpdatedAt(System.currentTimeMillis());
+
+        if (!messages.isEmpty() && messages.get(messages.size() - 1) instanceof UserMessage) {
+            String currentTurnSignature = buildMessageSignature(messages);
+            if (!currentTurnSignature.equals(progress.getLastUserTurnSignature())) {
+                progress.setTotalUserMessages(defaultValue(progress.getTotalUserMessages()) + 1);
+                progress.setLastUserTurnSignature(currentTurnSignature);
+            }
+        }
+
+        saveProgress(progress);
+        return progress;
+    }
+
+    private ConversationProgress bootstrapProgress(Object memoryId, List<ChatMessage> messages) {
+        ConversationSummary existingSummary = findSummaryByMemoryId(memoryId);
+        ConversationProgress progress = new ConversationProgress();
+        progress.setMemoryId(normalizeMemoryId(memoryId));
+        progress.setUpdatedAt(System.currentTimeMillis());
+
+        int currentUserMessages = countUserMessages(messages);
+        int summarizedUserMessages = existingSummary != null && existingSummary.getMessageCount() != null
+                ? existingSummary.getMessageCount()
+                : 0;
+
+        progress.setTotalUserMessages(Math.max(currentUserMessages, summarizedUserMessages));
+        progress.setSummarizedUserMessages(summarizedUserMessages);
+        progress.setSummaryVersion(existingSummary != null && StringUtils.hasText(existingSummary.getSummary()) ? 1 : 0);
+        if (!messages.isEmpty() && messages.get(messages.size() - 1) instanceof UserMessage) {
+            progress.setLastUserTurnSignature(buildMessageSignature(messages));
+        }
+        return progress;
+    }
+
+    private ConversationSummary findSummaryByMemoryId(Object memoryId) {
+        return mongoTemplate.findOne(queryByMemoryId(memoryId), ConversationSummary.class);
+    }
+
+    private ConversationProgress findProgressByMemoryId(Object memoryId) {
+        return mongoTemplate.findOne(queryByMemoryId(memoryId), ConversationProgress.class);
     }
 
     private void saveSummary(Object memoryId, String summary, int messageCount) {
-        Criteria criteria = Criteria.where("memoryId").is(String.valueOf(memoryId));
-        Query query = new Query(criteria);
         Update update = new Update();
-        update.set("memoryId", String.valueOf(memoryId));
-        // 这里记录的是生成摘要时对应的用户消息数量，用来判断后续是否需要再次刷新摘要
-        update.set("messageCount", messageCount);
+        update.set("memoryId", normalizeMemoryId(memoryId));
         update.set("summary", summary);
+        update.set("messageCount", messageCount);
         update.set("updatedAt", System.currentTimeMillis());
-        mongoTemplate.upsert(query, update, ConversationSummary.class);
+        mongoTemplate.upsert(queryByMemoryId(memoryId), update, ConversationSummary.class);
+    }
+
+    private void saveProgress(ConversationProgress progress) {
+        Update update = new Update();
+        update.set("memoryId", progress.getMemoryId());
+        update.set("totalUserMessages", defaultValue(progress.getTotalUserMessages()));
+        update.set("summarizedUserMessages", defaultValue(progress.getSummarizedUserMessages()));
+        update.set("summaryVersion", defaultValue(progress.getSummaryVersion()));
+        update.set("lastUserTurnSignature", progress.getLastUserTurnSignature());
+        update.set("updatedAt", progress.getUpdatedAt());
+        mongoTemplate.upsert(queryByMemoryId(progress.getMemoryId()), update, ConversationProgress.class);
     }
 
     private String buildSummaryPrompt(ConversationSummary existingSummary, List<ChatMessage> messages) {
         StringBuilder promptBuilder = new StringBuilder();
-        promptBuilder.append("请根据以下会话内容生成一段后续对话可复用的上下文摘要。\n");
-        promptBuilder.append("要求：\n");
-        promptBuilder.append("1. 只保留对后续对话有价值的信息。\n");
-        promptBuilder.append("2. 重点保留：用户身份信息、症状描述、就诊偏好、已确认的预约信息、当前待办事项。\n");
-        promptBuilder.append("3. 不要编造没有出现过的信息。\n");
-        promptBuilder.append("4. 使用简洁中文，控制在200字以内。\n\n");
+        promptBuilder.append("Please summarize the conversation context below for future turns in Simplified Chinese.\n");
+        promptBuilder.append("Requirements:\n");
+        promptBuilder.append("1. Keep only facts that are useful for later medical support conversations.\n");
+        promptBuilder.append("2. Focus on user profile, symptoms, confirmed appointments, preferences, and unfinished tasks.\n");
+        promptBuilder.append("3. Do not invent facts that do not appear in the conversation.\n");
+        promptBuilder.append("4. Keep the summary concise and under 200 Chinese characters when possible.\n\n");
 
         if (existingSummary != null && StringUtils.hasText(existingSummary.getSummary())) {
-            promptBuilder.append("历史摘要：\n");
+            promptBuilder.append("Existing summary:\n");
             promptBuilder.append(existingSummary.getSummary()).append("\n\n");
         }
 
-        promptBuilder.append("最新对话内容：\n");
+        promptBuilder.append("Latest conversation messages:\n");
         promptBuilder.append(ChatMessageSerializer.messagesToJson(messages));
         return promptBuilder.toString();
     }
 
-    private List<ChatMessage> filterSummaryMessages(List<ChatMessage> messages) {
+    private List<ChatMessage> filterConversationMessages(List<ChatMessage> messages) {
         return messages.stream()
                 .filter(message -> message instanceof UserMessage || message instanceof AiMessage)
                 .collect(Collectors.toList());
@@ -148,5 +206,42 @@ public class ConversationSummaryServiceImpl implements ConversationSummaryServic
         return (int) messages.stream()
                 .filter(UserMessage.class::isInstance)
                 .count();
+    }
+
+    private Query queryByMemoryId(Object memoryId) {
+        String normalizedMemoryId = normalizeMemoryId(memoryId);
+        Criteria criteria;
+        if (memoryId instanceof String) {
+            criteria = Criteria.where("memoryId").is(normalizedMemoryId);
+        } else {
+            criteria = new Criteria().orOperator(
+                    Criteria.where("memoryId").is(normalizedMemoryId),
+                    Criteria.where("memoryId").is(memoryId)
+            );
+        }
+        return new Query(criteria);
+    }
+
+    private String normalizeMemoryId(Object memoryId) {
+        return memoryId == null ? "" : String.valueOf(memoryId);
+    }
+
+    private int defaultValue(Integer value) {
+        return value == null ? 0 : value;
+    }
+
+    private String buildMessageSignature(List<ChatMessage> messages) {
+        String json = ChatMessageSerializer.messagesToJson(messages);
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            byte[] digest = messageDigest.digest(json.getBytes(StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            for (byte b : digest) {
+                builder.append(String.format("%02x", b));
+            }
+            return builder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 is not available", e);
+        }
     }
 }
