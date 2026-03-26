@@ -7,6 +7,7 @@ import com.atguigu.java.ai.langchain4j.skill.model.SkillRouteConfig;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -17,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class ClasspathSkillLoader implements SkillLoader {
 
     private static final String SKILL_PATTERN = "classpath*:skills/*/SKILL.md";
