@@ -9,14 +9,14 @@ import java.util.Optional;
 
 public class SkillSessionState {
 
-    private final String memoryId;
+    private final Long memoryId;
     private final Map<String, SkillActivation> activeSkills = new LinkedHashMap<>();
 
-    public SkillSessionState(String memoryId) {
+    public SkillSessionState(Long memoryId) {
         this.memoryId = Objects.requireNonNull(memoryId, "memoryId must not be null");
     }
 
-    public String getMemoryId() {
+    public Long getMemoryId() {
         return memoryId;
     }
 

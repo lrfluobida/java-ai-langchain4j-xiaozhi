@@ -20,7 +20,7 @@ class SkillRouterTest {
     void shouldActivateAppointmentSkillFromEntryKeywords() {
         SkillRouter router = router(List.of(skill("appointment", 100, true, 3, List.of("book"), List.of())));
 
-        List<SkillDefinition> routedSkills = router.route(new SkillContext("memory-1", "please book an appointment"));
+        List<SkillDefinition> routedSkills = router.route(new SkillContext(1L, "please book an appointment"));
 
         assertEquals(1, routedSkills.size());
         assertEquals("appointment", routedSkills.get(0).getName());
@@ -30,8 +30,8 @@ class SkillRouterTest {
     void shouldKeepStickySessionActiveAcrossTurns() {
         SkillRouter router = router(List.of(skill("appointment", 100, true, 2, List.of("book"), List.of())));
 
-        List<SkillDefinition> firstTurn = router.route(new SkillContext("memory-1", "please book an appointment"));
-        List<SkillDefinition> secondTurn = router.route(new SkillContext("memory-1", "follow up question"));
+        List<SkillDefinition> firstTurn = router.route(new SkillContext(1L, "please book an appointment"));
+        List<SkillDefinition> secondTurn = router.route(new SkillContext(1L, "follow up question"));
 
         assertEquals(1, firstTurn.size());
         assertEquals(1, secondTurn.size());
@@ -42,9 +42,9 @@ class SkillRouterTest {
     void shouldExpireSkillAfterMaxActiveTurns() {
         SkillRouter router = router(List.of(skill("appointment", 100, true, 2, List.of("book"), List.of())));
 
-        List<SkillDefinition> firstTurn = router.route(new SkillContext("memory-1", "please book an appointment"));
-        List<SkillDefinition> secondTurn = router.route(new SkillContext("memory-1", "follow up question"));
-        List<SkillDefinition> thirdTurn = router.route(new SkillContext("memory-1", "another question"));
+        List<SkillDefinition> firstTurn = router.route(new SkillContext(1L, "please book an appointment"));
+        List<SkillDefinition> secondTurn = router.route(new SkillContext(1L, "follow up question"));
+        List<SkillDefinition> thirdTurn = router.route(new SkillContext(1L, "another question"));
 
         assertEquals(1, firstTurn.size());
         assertEquals(1, secondTurn.size());
@@ -55,8 +55,8 @@ class SkillRouterTest {
     void shouldDeactivateActiveSkillWhenExitKeywordAppears() {
         SkillRouter router = router(List.of(skill("appointment", 100, true, 5, List.of("book"), List.of("stop"))));
 
-        List<SkillDefinition> firstTurn = router.route(new SkillContext("memory-1", "please book an appointment"));
-        List<SkillDefinition> secondTurn = router.route(new SkillContext("memory-1", "stop now"));
+        List<SkillDefinition> firstTurn = router.route(new SkillContext(1L, "please book an appointment"));
+        List<SkillDefinition> secondTurn = router.route(new SkillContext(1L, "stop now"));
 
         assertEquals(1, firstTurn.size());
         assertTrue(secondTurn.isEmpty());
