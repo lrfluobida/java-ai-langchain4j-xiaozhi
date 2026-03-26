@@ -1,6 +1,6 @@
 # 硅谷小智医疗助手后端
 
-一个基于 `Spring Boot 3 + LangChain4j + MongoDB + MySQL + Pinecone` 的医疗 AI 助手后端项目。当前项目围绕“医疗问答 + 会话记忆 + 预约挂号 + RAG 检索”这几条主链路展开，适合作为 AI 应用项目演示、课程实践和二次开发基础。
+一个基于 `Spring Boot 3 + LangChain4j + MongoDB + MySQL + Pinecone` 的医疗 AI 助手后端项目。当前项目围绕“医疗问答 + 会话记忆 + 通用 Claude 风格 Skill 框架 + RAG 检索”这几条主链路展开，适合作为 AI 应用项目演示、课程实践和二次开发基础。
 
 ## 当前已实现
 
@@ -8,7 +8,7 @@
 - 会话记忆：按 `memoryId` 隔离会话，并将聊天记录持久化到 MongoDB
 - 会话摘要：在多轮对话场景下自动提炼摘要，并注入后续上下文
 - 预约挂号工具调用：支持查询号源、预约挂号、取消预约
-- 预约技能规则：对预约相关会话注入单独的 skill 规则
+- 通用 Skill 框架：通过 `src/main/resources/skills/<name>/SKILL.md` + `src/main/resources/skills.yml` 按需加载 Claude 风格技能，并由通用 Skill 服务替代旧的预约专属 skill service
 - RAG 检索：支持基于 embedding + Pinecone 的知识库增强问答
 - 后端手动导入知识库：支持查看文件列表并导入指定知识库文件
 
@@ -39,6 +39,11 @@ src/main/java/com/atguigu/java/ai/langchain4j
 ├─ service/impl/                    # 业务服务实现
 ├─ store/                           # Mongo 会话记忆存储
 └─ tools/                           # LangChain4j 工具调用实现
+
+src/main/resources
+├─ skills.yml                        # 通用 Skill 框架配置
+└─ skills/                           # Claude 风格 Skill 资源目录
+   └─ <name>/SKILL.md                # 单个 skill 的提示词与规则定义
 ```
 
 ## 核心链路
@@ -48,7 +53,7 @@ src/main/java/com/atguigu/java/ai/langchain4j
 - 聊天控制器：[`XiaozhiController`](src/main/java/com/atguigu/java/ai/langchain4j/controller/XiaozhiController.java)
 - 记忆存储：[`MongoChatMemoryStore`](src/main/java/com/atguigu/java/ai/langchain4j/store/MongoChatMemoryStore.java)
 - 摘要服务：[`ConversationSummaryServiceImpl`](src/main/java/com/atguigu/java/ai/langchain4j/service/impl/ConversationSummaryServiceImpl.java)
-- 预约技能：[`AppointmentSkillServiceImpl`](src/main/java/com/atguigu/java/ai/langchain4j/service/impl/AppointmentSkillServiceImpl.java)
+- Skill 路由与装配：基于 `skills.yml` 和 `skills/<name>/SKILL.md` 构建通用 Skill 选择、加载与 prompt 装配流程，替代旧的预约专属 skill service
 - 工具调用：[`AppointmentTools`](src/main/java/com/atguigu/java/ai/langchain4j/tools/AppointmentTools.java)
 - RAG 管理接口：[`RagController`](src/main/java/com/atguigu/java/ai/langchain4j/controller/RagController.java)
 
@@ -162,7 +167,8 @@ POST /xiaozhi/chat
 
 - 返回类型为流式文本
 - 同一个 `memoryId` 会复用同一段会话记忆
-- 如果命中预约场景，会自动注入预约 skill 规则
+- 如果命中配置的 skill 场景，会自动从 `src/main/resources/skills/<name>/SKILL.md` 装配对应规则，并结合 `src/main/resources/skills.yml` 完成通用 Skill 路由
+- 旧的预约专属 skill service 已被通用 Skill 框架替代，聊天接口不再只依赖预约场景
 
 ### 2. RAG 文件列表接口
 
