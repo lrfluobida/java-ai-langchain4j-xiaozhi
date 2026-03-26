@@ -14,10 +14,10 @@ langchain4j:
     dashscope:
       chat-model:
         api-key: ${QWEN_API_KEY}
-        model-name: "qwen3-max"
+        model-name: "qwen3.5-flash"
       streaming-chat-model:
         api-key: ${QWEN_API_KEY}
-        model-name: "qwen3-max"
+        model-name: "qwen3.5-flash"
       embedding-model:
         api-key: ${QWEN_API_KEY}
         model-name: "text-embedding-v4"

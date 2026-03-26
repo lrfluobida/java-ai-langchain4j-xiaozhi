@@ -30,8 +30,8 @@ public class ConversationSummaryServiceImpl implements ConversationSummaryServic
 
     private static final Logger log = LoggerFactory.getLogger(ConversationSummaryServiceImpl.class);
 
-    private static final int MIN_SUMMARY_USER_MESSAGES = 3;
-    private static final int SUMMARY_REFRESH_USER_MESSAGES = 2;
+    private static final int MIN_SUMMARY_USER_MESSAGES = 8;
+    private static final int SUMMARY_REFRESH_USER_MESSAGES = 4;
 
     @Autowired
     private MongoTemplate mongoTemplate;
