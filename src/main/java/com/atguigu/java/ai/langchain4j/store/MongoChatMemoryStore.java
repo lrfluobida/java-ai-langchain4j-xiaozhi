@@ -2,6 +2,7 @@ package com.atguigu.java.ai.langchain4j.store;
 
 import com.atguigu.java.ai.langchain4j.bean.MyChatMessages;
 import com.atguigu.java.ai.langchain4j.service.ConversationSummaryService;
+import com.atguigu.java.ai.langchain4j.skill.session.SkillSessionStore;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.ChatMessageDeserializer;
@@ -36,6 +37,9 @@ public class MongoChatMemoryStore implements ChatMemoryStore {
 
     @Autowired
     private ConversationSummaryService conversationSummaryService;
+
+    @Autowired
+    private SkillSessionStore skillSessionStore;
 
     @Override
     public List<ChatMessage> getMessages(Object memoryId) {
@@ -73,6 +77,7 @@ public class MongoChatMemoryStore implements ChatMemoryStore {
         transientSystemMessages.remove(normalizeMemoryId(memoryId));
         mongoTemplate.remove(queryByMemoryId(memoryId), MyChatMessages.class);
         conversationSummaryService.deleteSummary(memoryId);
+        skillSessionStore.remove(toLongMemoryId(memoryId));
     }
 
     private List<ChatMessage> loadPersistentMessages(Object memoryId) {
@@ -124,5 +129,22 @@ public class MongoChatMemoryStore implements ChatMemoryStore {
 
     private String normalizeMemoryId(Object memoryId) {
         return memoryId == null ? "" : String.valueOf(memoryId);
+    }
+
+    private Long toLongMemoryId(Object memoryId) {
+        if (memoryId instanceof Long longMemoryId) {
+            return longMemoryId;
+        }
+        if (memoryId instanceof Number number) {
+            return number.longValue();
+        }
+        if (memoryId instanceof String stringMemoryId && StringUtils.hasText(stringMemoryId)) {
+            try {
+                return Long.valueOf(stringMemoryId);
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+        return null;
     }
 }

@@ -2,8 +2,8 @@ package com.atguigu.java.ai.langchain4j.controller;
 
 import com.atguigu.java.ai.langchain4j.assistant.XiaozhiAgent;
 import com.atguigu.java.ai.langchain4j.bean.ChatForm;
-import com.atguigu.java.ai.langchain4j.service.AppointmentSkillService;
 import com.atguigu.java.ai.langchain4j.service.ConversationSummaryService;
+import com.atguigu.java.ai.langchain4j.skill.service.SkillPromptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class XiaozhiController {
     private XiaozhiAgent xiaozhiAgent;
 
     @Autowired
-    private AppointmentSkillService appointmentSkillService;
+    private SkillPromptService skillPromptService;
 
     @Autowired
     private ConversationSummaryService conversationSummaryService;
@@ -31,7 +31,7 @@ public class XiaozhiController {
     @PostMapping(value = "/chat", produces = "text/stream;charset=utf-8")
     public Flux<String> chat(@RequestBody ChatForm chatForm) {
         String conversationSummary = conversationSummaryService.getSummary(chatForm.getMemoryId());
-        String appointmentSkillRules = appointmentSkillService.resolveAppointmentSkill(
+        String skillRules = skillPromptService.resolveSkillRules(
                 chatForm.getMemoryId(),
                 chatForm.getMessage()
         );
@@ -39,7 +39,7 @@ public class XiaozhiController {
                 chatForm.getMemoryId(),
                 chatForm.getMessage(),
                 conversationSummary,
-                appointmentSkillRules
+                skillRules
         );
     }
 }

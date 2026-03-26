@@ -23,6 +23,6 @@ public interface XiaozhiAgent {
             @MemoryId Long memoryId,
             @UserMessage String userMessage,
             @V("conversation_summary") String conversationSummary,
-            @V("appointment_skill_rules") String appointmentSkillRules
+            @V("skill_rules") String skillRules
     );
 }
