@@ -1,0 +1,17 @@
+skills:
+  - name: appointment
+    enabled: true
+    priority: 100
+    keywords:
+      - 挂号
+      - 预约
+      - 预约挂号
+      - 取消预约
+      - 取消挂号
+      - 号源
+      - 门诊
+      - 看病
+      - 看诊
+    stickySession: true
+    exitKeywords: []
+    maxActiveTurns: 12
