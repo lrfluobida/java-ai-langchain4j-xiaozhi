@@ -8,7 +8,7 @@ public class SkillRouteConfig {
     private String name;
     private Boolean enabled = Boolean.TRUE;
     private Integer priority = 0;
-    private List<String> keywords = new ArrayList<>();
+    private List<String> entryKeywords = new ArrayList<>();
     private Boolean stickySession = Boolean.FALSE;
     private List<String> exitKeywords = new ArrayList<>();
     private Integer maxActiveTurns = 0;
@@ -37,12 +37,12 @@ public class SkillRouteConfig {
         this.priority = priority;
     }
 
-    public List<String> getKeywords() {
-        return keywords;
+    public List<String> getEntryKeywords() {
+        return entryKeywords;
     }
 
-    public void setKeywords(List<String> keywords) {
-        this.keywords = keywords;
+    public void setEntryKeywords(List<String> entryKeywords) {
+        this.entryKeywords = entryKeywords;
     }
 
     public Boolean getStickySession() {

@@ -24,8 +24,8 @@ class SkillPropertiesTest {
         assertEquals("appointment", config.getName());
         assertTrue(config.getEnabled());
         assertEquals(100, config.getPriority());
-        assertEquals(9, config.getKeywords().size());
-        assertTrue(config.getKeywords().contains("挂号"));
+        assertEquals(9, config.getEntryKeywords().size());
+        assertTrue(config.getEntryKeywords().contains("挂号"));
         assertTrue(config.getStickySession());
         assertTrue(config.getExitKeywords().isEmpty());
         assertEquals(12, config.getMaxActiveTurns());

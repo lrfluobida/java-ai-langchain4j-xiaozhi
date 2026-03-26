@@ -2,7 +2,7 @@ skills:
   - name: appointment
     enabled: true
     priority: 100
-    keywords:
+    entryKeywords:
       - 挂号
       - 预约
       - 预约挂号
