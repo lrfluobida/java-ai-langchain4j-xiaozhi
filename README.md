@@ -15,8 +15,8 @@
 ## 技术栈
 
 - Java 17
-- Spring Boot 3.2.6
-- LangChain4j 1.0.0-beta3
+- Spring Boot 3.5.0
+- LangChain4j 1.12.1
 - MongoDB
 - MySQL 8.x
 - MyBatis-Plus

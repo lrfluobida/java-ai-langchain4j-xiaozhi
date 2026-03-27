@@ -4,6 +4,7 @@ import com.atguigu.java.ai.langchain4j.skill.config.SkillProperties;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillDefinition;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillFrontMatter;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillRouteConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -26,6 +27,7 @@ public class ClasspathSkillLoader implements SkillLoader {
     private final SkillProperties skillProperties;
     private final ResourcePatternResolver resourcePatternResolver;
 
+    @Autowired
     public ClasspathSkillLoader(SkillProperties skillProperties) {
         this(skillProperties, new PathMatchingResourcePatternResolver());
     }

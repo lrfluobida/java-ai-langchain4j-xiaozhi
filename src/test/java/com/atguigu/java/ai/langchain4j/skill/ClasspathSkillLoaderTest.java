@@ -5,7 +5,9 @@ import com.atguigu.java.ai.langchain4j.skill.loader.ClasspathSkillLoader;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillDefinition;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillRouteConfig;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +15,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ClasspathSkillLoaderTest {
+
+    @Test
+    void shouldMarkSpringInjectionConstructorExplicitly() throws NoSuchMethodException {
+        Constructor<ClasspathSkillLoader> constructor = ClasspathSkillLoader.class.getConstructor(SkillProperties.class);
+
+        assertTrue(constructor.isAnnotationPresent(Autowired.class));
+    }
+
 
     @Test
     void shouldLoadSkillMarkdownAndMergeMatchingRouteConfig() {
