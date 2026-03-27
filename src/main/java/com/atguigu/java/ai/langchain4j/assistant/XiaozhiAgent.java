@@ -11,7 +11,7 @@ import static dev.langchain4j.service.spring.AiServiceWiringMode.EXPLICIT;
 
 @AiService(
         wiringMode = EXPLICIT,
-        streamingChatModel = "qwenStreamingChatModel",
+        streamingChatModel = "qwen35FlashStreamingChatModel",
         chatMemoryProvider = "chatMemoryProviderXiaozhi",
         tools = "appointmentTools",
         contentRetriever = "contentRetrieverXiaozhiPincone"
@@ -23,6 +23,6 @@ public interface XiaozhiAgent {
             @MemoryId Long memoryId,
             @UserMessage String userMessage,
             @V("conversation_summary") String conversationSummary,
-            @V("appointment_skill_rules") String appointmentSkillRules
+            @V("skill_rules") String skillRules
     );
 }

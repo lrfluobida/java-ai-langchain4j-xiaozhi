@@ -3,7 +3,7 @@ package com.atguigu.java.ai.langchain4j.service.impl;
 import com.atguigu.java.ai.langchain4j.bean.ConversationProgress;
 import com.atguigu.java.ai.langchain4j.bean.ConversationSummary;
 import com.atguigu.java.ai.langchain4j.service.ConversationSummaryService;
-import dev.langchain4j.community.model.dashscope.QwenChatModel;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.ChatMessageSerializer;
@@ -11,6 +11,7 @@ import dev.langchain4j.data.message.UserMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,7 +38,8 @@ public class ConversationSummaryServiceImpl implements ConversationSummaryServic
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    private QwenChatModel qwenChatModel;
+    @Qualifier("qwen35FlashChatModel")
+    private OpenAiChatModel openAiChatModel;
 
     @Override
     public String getSummary(Object memoryId) {
@@ -81,7 +83,7 @@ public class ConversationSummaryServiceImpl implements ConversationSummaryServic
         ConversationSummary existingSummary = findSummaryByMemoryId(memoryId);
         try {
             String summaryPrompt = buildSummaryPrompt(existingSummary, conversationMessages);
-            String summary = qwenChatModel.chat(summaryPrompt);
+            String summary = openAiChatModel.chat(summaryPrompt);
             if (!StringUtils.hasText(summary)) {
                 return;
             }
