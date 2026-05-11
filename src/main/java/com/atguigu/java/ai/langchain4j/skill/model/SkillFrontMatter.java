@@ -5,6 +5,7 @@ public class SkillFrontMatter {
     private String name;
     private String description;
     private Integer version;
+    private Boolean progressive;
 
     public String getName() {
         return name;
@@ -28,5 +29,13 @@ public class SkillFrontMatter {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public Boolean getProgressive() {
+        return progressive;
+    }
+
+    public void setProgressive(Boolean progressive) {
+        this.progressive = progressive;
     }
 }

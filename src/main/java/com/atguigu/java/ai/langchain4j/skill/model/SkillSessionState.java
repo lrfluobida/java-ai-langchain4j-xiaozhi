@@ -55,4 +55,8 @@ public class SkillSessionState {
             activeSkills.remove(skillName);
         }
     }
+
+    public synchronized Map<String, SkillActivation> getActiveSkills() {
+        return new LinkedHashMap<>(activeSkills);
+    }
 }

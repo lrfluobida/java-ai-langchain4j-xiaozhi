@@ -33,15 +33,24 @@ class ClasspathSkillLoaderTest {
         routeConfig.setPriority(100);
         routeConfig.setStickySession(true);
         routeConfig.setMaxActiveTurns(12);
-        skillProperties.setSkills(List.of(routeConfig));
+        SkillRouteConfig progressiveRouteConfig = new SkillRouteConfig();
+        progressiveRouteConfig.setName("appointment-progressive");
+        progressiveRouteConfig.setEnabled(true);
+        progressiveRouteConfig.setPriority(100);
+        progressiveRouteConfig.setStickySession(true);
+        progressiveRouteConfig.setMaxActiveTurns(12);
+        skillProperties.setSkills(List.of(routeConfig, progressiveRouteConfig));
 
         ClasspathSkillLoader loader = new ClasspathSkillLoader(skillProperties);
 
         List<SkillDefinition> skills = loader.loadSkills();
 
-        assertEquals(1, skills.size());
+        assertEquals(2, skills.size());
 
-        SkillDefinition skill = skills.get(0);
+        SkillDefinition skill = skills.stream()
+                .filter(candidate -> "appointment".equals(candidate.getName()))
+                .findFirst()
+                .orElseThrow();
         assertEquals("appointment", skill.getName());
         assertEquals("处理预约挂号、取消预约和号源查询的技能", skill.getDescription());
         assertEquals(1, skill.getVersion());

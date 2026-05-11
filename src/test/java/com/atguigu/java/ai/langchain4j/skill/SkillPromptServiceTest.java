@@ -4,8 +4,9 @@ import com.atguigu.java.ai.langchain4j.skill.model.SkillContext;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillDefinition;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillRouteConfig;
 import com.atguigu.java.ai.langchain4j.skill.prompt.SkillPromptAssembler;
-import com.atguigu.java.ai.langchain4j.skill.router.SkillRouter;
+import com.atguigu.java.ai.langchain4j.skill.selector.SkillSelectionService;
 import com.atguigu.java.ai.langchain4j.skill.service.SkillPromptService;
+import com.atguigu.java.ai.langchain4j.skill.session.SkillSessionStore;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -20,26 +21,34 @@ class SkillPromptServiceTest {
 
     @Test
     void shouldReturnAppointmentPromptForAppointmentIntent() {
-        SkillRouter skillRouter = Mockito.mock(SkillRouter.class);
-        when(skillRouter.route(any(SkillContext.class))).thenAnswer(invocation -> {
+        SkillSelectionService skillSelectionService = Mockito.mock(SkillSelectionService.class);
+        when(skillSelectionService.select(any(SkillContext.class))).thenAnswer(invocation -> {
             SkillContext context = invocation.getArgument(0);
             assertEquals(3001L, context.memoryId());
             assertEquals("I want to book an appointment", context.message());
             return List.of(skill("appointment", "appointment prompt"));
         });
 
-        SkillPromptService skillPromptService = new SkillPromptService(skillRouter, new SkillPromptAssembler());
+        SkillPromptService skillPromptService = new SkillPromptService(
+                skillSelectionService,
+                new SkillPromptAssembler(),
+                new SkillSessionStore()
+        );
 
         assertEquals("appointment prompt", skillPromptService.resolveSkillRules(3001L, "I want to book an appointment"));
-        verify(skillRouter).route(any(SkillContext.class));
+        verify(skillSelectionService).select(any(SkillContext.class));
     }
 
     @Test
     void shouldReturnEmptyStringWhenRouterReturnsNoSkills() {
-        SkillRouter skillRouter = Mockito.mock(SkillRouter.class);
-        when(skillRouter.route(any(SkillContext.class))).thenReturn(List.of());
+        SkillSelectionService skillSelectionService = Mockito.mock(SkillSelectionService.class);
+        when(skillSelectionService.select(any(SkillContext.class))).thenReturn(List.of());
 
-        SkillPromptService skillPromptService = new SkillPromptService(skillRouter, new SkillPromptAssembler());
+        SkillPromptService skillPromptService = new SkillPromptService(
+                skillSelectionService,
+                new SkillPromptAssembler(),
+                new SkillSessionStore()
+        );
 
         assertEquals("", skillPromptService.resolveSkillRules(3001L, "I want to book an appointment"));
     }

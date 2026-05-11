@@ -24,6 +24,10 @@ public class SkillRouter {
         this.skillSessionStore = Objects.requireNonNull(skillSessionStore, "skillSessionStore must not be null");
     }
 
+    public SkillRegistry getSkillRegistry() {
+        return skillRegistry;
+    }
+
     public List<SkillDefinition> route(SkillContext context) {
         Objects.requireNonNull(context, "context must not be null");
         SkillSessionState sessionState = skillSessionStore.getOrCreate(context.memoryId());

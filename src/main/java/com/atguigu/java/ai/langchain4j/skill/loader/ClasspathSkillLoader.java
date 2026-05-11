@@ -1,6 +1,7 @@
 package com.atguigu.java.ai.langchain4j.skill.loader;
 
 import com.atguigu.java.ai.langchain4j.skill.config.SkillProperties;
+import com.atguigu.java.ai.langchain4j.skill.model.LayeredSkillContent;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillDefinition;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillFrontMatter;
 import com.atguigu.java.ai.langchain4j.skill.model.SkillRouteConfig;
@@ -26,6 +27,7 @@ public class ClasspathSkillLoader implements SkillLoader {
 
     private final SkillProperties skillProperties;
     private final ResourcePatternResolver resourcePatternResolver;
+    private final LayeredContentParser layeredContentParser;
 
     @Autowired
     public ClasspathSkillLoader(SkillProperties skillProperties) {
@@ -35,6 +37,7 @@ public class ClasspathSkillLoader implements SkillLoader {
     ClasspathSkillLoader(SkillProperties skillProperties, ResourcePatternResolver resourcePatternResolver) {
         this.skillProperties = Objects.requireNonNull(skillProperties, "skillProperties must not be null");
         this.resourcePatternResolver = Objects.requireNonNull(resourcePatternResolver, "resourcePatternResolver must not be null");
+        this.layeredContentParser = new LayeredContentParser();
     }
 
     @Override
@@ -60,11 +63,17 @@ public class ClasspathSkillLoader implements SkillLoader {
         String markdown = readResource(resource);
         ParsedSkill parsedSkill = parseSkill(markdown, resource);
         SkillRouteConfig routeConfig = findRouteConfig(parsedSkill.frontMatter().getName(), resource);
+
+        // 解析分层内容
+        boolean progressive = Boolean.TRUE.equals(parsedSkill.frontMatter().getProgressive());
+        LayeredSkillContent layeredContent = layeredContentParser.parse(parsedSkill.content(), progressive);
+
         return new SkillDefinition(
                 parsedSkill.frontMatter().getName(),
                 parsedSkill.frontMatter().getDescription(),
                 parsedSkill.frontMatter().getVersion(),
                 parsedSkill.content(),
+                layeredContent,
                 routeConfig
         );
     }
@@ -118,6 +127,7 @@ public class ClasspathSkillLoader implements SkillLoader {
                 case "name" -> frontMatter.setName(value);
                 case "description" -> frontMatter.setDescription(value);
                 case "version" -> frontMatter.setVersion(Integer.valueOf(value));
+                case "progressive" -> frontMatter.setProgressive(Boolean.valueOf(value));
                 default -> {
                 }
             }

@@ -22,12 +22,16 @@ class SkillPropertiesTest {
         SkillRouteConfig config = skillProperties.getSkills().get(0);
 
         assertEquals("appointment", config.getName());
-        assertTrue(config.getEnabled());
+        assertEquals(false, config.getEnabled());
         assertEquals(100, config.getPriority());
         assertEquals(9, config.getEntryKeywords().size());
         assertTrue(config.getEntryKeywords().contains("挂号"));
         assertTrue(config.getStickySession());
         assertTrue(config.getExitKeywords().isEmpty());
         assertEquals(12, config.getMaxActiveTurns());
+
+        SkillRouteConfig progressiveConfig = skillProperties.getSkills().get(1);
+        assertEquals("appointment-progressive", progressiveConfig.getName());
+        assertTrue(progressiveConfig.getEnabled());
     }
 }

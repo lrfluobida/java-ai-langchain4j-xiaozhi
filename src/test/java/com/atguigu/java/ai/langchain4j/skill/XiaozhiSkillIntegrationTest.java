@@ -44,7 +44,7 @@ class XiaozhiSkillIntegrationTest {
     @Test
     void shouldResolveGenericSkillRulesBeforeCallingAgent() {
         when(conversationSummaryService.getSummary(3001L)).thenReturn("history summary");
-        when(skillPromptService.resolveSkillRules(3001L, "我要预约挂号")).thenReturn("generic skill rules");
+        when(skillPromptService.resolveSkillRulesWithDisclosure(3001L, "我要预约挂号")).thenReturn("generic skill rules");
         when(xiaozhiAgent.chat(3001L, "我要预约挂号", "history summary", "generic skill rules"))
                 .thenReturn(Flux.just("ok"));
 
@@ -56,7 +56,7 @@ class XiaozhiSkillIntegrationTest {
                 .expectStatus().isOk()
                 .expectBody(String.class).isEqualTo("ok");
 
-        verify(skillPromptService).resolveSkillRules(3001L, "我要预约挂号");
+        verify(skillPromptService).resolveSkillRulesWithDisclosure(3001L, "我要预约挂号");
         verify(xiaozhiAgent).chat(3001L, "我要预约挂号", "history summary", "generic skill rules");
     }
 

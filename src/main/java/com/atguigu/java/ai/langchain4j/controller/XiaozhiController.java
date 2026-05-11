@@ -31,7 +31,7 @@ public class XiaozhiController {
     @PostMapping(value = "/chat", produces = "text/stream;charset=utf-8")
     public Flux<String> chat(@RequestBody ChatForm chatForm) {
         String conversationSummary = conversationSummaryService.getSummary(chatForm.getMemoryId());
-        String skillRules = skillPromptService.resolveSkillRules(
+        String skillRules = skillPromptService.resolveSkillRulesWithDisclosure(
                 chatForm.getMemoryId(),
                 chatForm.getMessage()
         );
