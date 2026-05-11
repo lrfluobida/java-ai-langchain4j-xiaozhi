@@ -1,3 +1,7 @@
 # 项目排除路径
 /target/
 /.worktrees/
+docs/
+test-data/
+test-output/
+.m2repo/
